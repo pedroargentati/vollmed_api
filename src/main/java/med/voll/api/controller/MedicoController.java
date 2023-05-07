@@ -47,7 +47,7 @@ public class MedicoController {
 	@PostMapping
 	@ResponseBody
 	@Transactional
-	public ResponseEntity cadastrarMedico(@RequestBody @Valid DadosCadastroMedico dados, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<?> cadastrarMedico(@RequestBody @Valid DadosCadastroMedico dados, UriComponentsBuilder uriBuilder) {
 		/**
 		 * No controller não recebemos um objeto do tipo médico, e sim um DTO (DadosCadastoMedico)
 		 * então será necessário fazer uma conversão de DTO para um objeto do tipo Medico (JPA Entity).
