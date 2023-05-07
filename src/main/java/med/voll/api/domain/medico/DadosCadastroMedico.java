@@ -8,24 +8,24 @@ import jakarta.validation.constraints.Pattern;
 import med.voll.api.domain.endereco.DadosEndereco;
 
 public record DadosCadastroMedico(
-			@NotBlank
+			@NotBlank(message = "O campo 'nome' não pode ser nulo/vazio.")
 			String nome,
 			
-			@NotBlank
+			@NotBlank(message = "O campo 'email' não pode ser nulo/vazio.")
 			@Email
 			String email,
 			
-			@NotBlank
+			@NotBlank(message = "O campo 'telefone' não pode ser nulo/vazio.")
 			String telefone,
 
-			@NotBlank
-			@Pattern(regexp = "\\d{4,6}")
+			@NotBlank(message = "O campo 'crm' não pode ser nulo/vazio.")
+			@Pattern(regexp = "\\d{4,6}", message = "Formato para o CRM está inválido!")
 			String crm,
 			
-			@NotNull
+			@NotNull(message = "O campo 'especialidade' não pode ser nulo/vazio.")
 			Especialidade especialidade, 
 			
-			@NotNull
+			@NotNull(message = "O campo 'endereco' não pode ser nulo/vazio.")
 			@Valid
 			DadosEndereco endereco ) {
 
