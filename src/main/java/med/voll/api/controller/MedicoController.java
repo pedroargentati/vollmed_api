@@ -38,6 +38,12 @@ public class MedicoController {
 		return ResponseEntity.ok(page);
 	}
 	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> obterMedicoPorId(@PathVariable("id") Long id) {
+		var medico = medicoRepository.getReferenceById(id);
+		return ResponseEntity.ok(new DadosDetalhamentoMedio(medico));
+	}
+	
 	@PostMapping
 	@ResponseBody
 	@Transactional
