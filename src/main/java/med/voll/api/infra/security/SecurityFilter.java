@@ -9,6 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import med.voll.api.infra.exception.SecurityException;
 
 @Component // -> classe/componente genérico da aplicação
 public class SecurityFilter extends OncePerRequestFilter {
@@ -24,10 +25,15 @@ public class SecurityFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 
+	/**
+	 * Extrai o token enviado no header Authorization da requisição.
+	 * @param request
+	 * @return token enviado na request.
+	 */
 	private String extrairToken(HttpServletRequest request) {
 		var authorizationHeader = request.getHeader("Authorization");
 		if (authorizationHeader == null) {
-			throw new RuntimeException("[ERRO] Token JWT não enviado no cabeçalho (Authorization) da requisição.");
+			throw new SecurityException("[ERRO] Token JWT não enviado no cabeçalho (Authorization) da requisição.");
 		}
 		return authorizationHeader.replace("Bearer ", "");
 	}
