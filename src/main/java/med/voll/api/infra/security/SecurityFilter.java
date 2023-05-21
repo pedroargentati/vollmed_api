@@ -2,6 +2,7 @@ package med.voll.api.infra.security;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,6 +14,9 @@ import med.voll.api.infra.exception.SecurityException;
 
 @Component // -> classe/componente genérico da aplicação
 public class SecurityFilter extends OncePerRequestFilter {
+	
+	@Autowired
+	private TokenService tokenService;
 
 	/***
 	 * Será disparado para todas as requisições (apenas uma vez por request) que passarem pela API.
@@ -21,6 +25,8 @@ public class SecurityFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		var tokenJWT = extrairToken(request);
 		
+		var subject = tokenService.getSubject(tokenJWT);
+		System.out.println(subject);
 		
 		filterChain.doFilter(request, response);
 	}
