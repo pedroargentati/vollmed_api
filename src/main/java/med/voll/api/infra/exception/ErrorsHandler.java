@@ -53,12 +53,6 @@ public class ErrorsHandler {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
 	}
 
-	
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> tratarErro400(MethodArgumentNotValidException ex) {
-        var erros = ex.getFieldErrors();
-        return ResponseEntity.badRequest().body(erros.stream().map(DadosErroValidacao::new).toList());
-    }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> tratarErro400(HttpMessageNotReadableException ex) {
