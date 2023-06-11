@@ -14,6 +14,7 @@ public interface PacienteRepository extends JpaRepository<Paciente, Long> {
            p.id = :id
            and
            p.ativo = true
-    """)
-    Boolean findByAtivoTrue(Long id);
+    		""")
+    Boolean findAtivoById(Long id);
+    
 }
