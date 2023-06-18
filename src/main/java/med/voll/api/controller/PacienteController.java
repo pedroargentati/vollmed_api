@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import med.voll.api.domain.paciente.DadosAtualizacaoPaciente;
 import med.voll.api.domain.paciente.DadosCadastroPaciente;
 import med.voll.api.domain.paciente.DadosDetalhamentoPaciente;
 import med.voll.api.domain.paciente.DadosListagemPaciente;
@@ -44,5 +45,23 @@ public class PacienteController {
 	public ResponseEntity<Page<DadosListagemPaciente>> listaPacientes(@PageableDefault(size = 10, sort = "nome") Pageable paginacao) {
 		var page = repository.findAll(paginacao).map(DadosListagemPaciente::new);
 		return ResponseEntity.ok(page);
+	}
+	
+	@PutMapping("/{id}")
+	@Transactional
+	public ResponseEntity<DadosDetalhamentoPaciente> atualizarPaciente(@RequestBody @Valid DadosAtualizacaoPaciente dados, @PathVariable Long id) {
+		Paciente paciente = repository.getReferenceById(id);
+		paciente.atualizarInformacoes(dados);
+		
+		return ResponseEntity.ok(new DadosDetalhamentoPaciente(paciente));
+	}
+	
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity<?> desativarPaciente(@PathVariable Long id) {
+		Paciente paciente = repository.getReferenceById(id);
+		paciente.excluir();
+		
+		return ResponseEntity.noContent().build();
 	}
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.persistence.EntityNotFoundException;
+import med.voll.api.domain.BusinessException;
 
 @RestControllerAdvice // -> anotação do spring que indica que é uma calsse de tratamento de erros.
 public class ErrorsHandler {
@@ -72,6 +73,11 @@ public class ErrorsHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> tratarErroAcessoNegado() {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado");
+    }
+    
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<?> tratarBusinessException(BusinessException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

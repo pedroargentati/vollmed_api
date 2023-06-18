@@ -6,4 +6,12 @@ public class BusinessException extends RuntimeException {
 		super(mensagem);
 	}
 	
+	public BusinessException(String... mensagens) {
+		 super(String.join("\n", mensagens));
+	}
+	
+	public BusinessException() {
+		super();
+	}
+	
 }

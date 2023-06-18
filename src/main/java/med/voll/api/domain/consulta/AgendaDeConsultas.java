@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import med.voll.api.domain.BusinessException;
-import med.voll.api.domain.consulta.validacoes.ValidadorAgendamentoDeConsulta;
+import med.voll.api.domain.consulta.validacoes.agendamento.ValidadorAgendamentoDeConsulta;
+import med.voll.api.domain.consulta.validacoes.cancelamento.ValidadorCancelamentoDeConsulta;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
 import med.voll.api.domain.paciente.PacienteRepository;
@@ -27,7 +28,10 @@ public class AgendaDeConsultas {
 	@Autowired
 	private List<ValidadorAgendamentoDeConsulta> validadores;
 	
-	public void agendar(DadosAgendamentoConsulta dados) {
+	@Autowired
+	private List<ValidadorCancelamentoDeConsulta> validadorCancelamento;
+	
+	public DadosDetalhamentoConsulta agendar(DadosAgendamentoConsulta dados) {
 		if (!pacienteRepository.existsById(dados.idPaciente())) {
 			throw new BusinessException("Id do paciente informado não existe.");
 		}
@@ -40,10 +44,29 @@ public class AgendaDeConsultas {
 		validadores.forEach(v -> v.validar(dados));
 		
 		var medico = escolherMedico(dados);
+		
+		if (medico == null) {
+			throw new BusinessException("Não existe médico disponível nessa data.");
+		}
+		
 		var paciente = pacienteRepository.getReferenceById(dados.idPaciente());
 		var consulta = new Consulta(null, medico, paciente, dados.data());
 		
 		consultaRepository.save(consulta);
+		return new DadosDetalhamentoConsulta(consulta);
+	}
+	
+	public DadosCancelamentoConsulta cancelar(DadosCancelamentoConsulta dados) {
+		if (!consultaRepository.existsById(dados.idConsulta())) {
+			throw new BusinessException("Id da consulta a ser cancelada não foi encontrada.");
+		}
+		
+		validadorCancelamento.forEach(v -> v.validar(dados));
+		
+	    var consulta = consultaRepository.getReferenceById(dados.idConsulta());
+	    consultaRepository.deleteById(dados.idConsulta());
+		
+		return null;
 	}
 
 	private Medico escolherMedico(DadosAgendamentoConsulta dados) {
@@ -58,7 +81,4 @@ public class AgendaDeConsultas {
 		return medicoRepository.escolherMedicoAleatorioLivreNaData(dados.especialidade(), dados.data());
 		
 	}
-	
-	
-	
 }
